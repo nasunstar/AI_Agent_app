@@ -1,15 +1,6 @@
-@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
-
 package com.example.database_project.network
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.InternalSerializationApi
-
-@Serializable
-data class OpenAiRequest(
-    val model: String,
-    val messages: List<Message>
-)
 
 @Serializable
 data class Message(
@@ -18,11 +9,20 @@ data class Message(
 )
 
 @Serializable
-data class OpenAiResponse(
-    val choices: List<Choice>
+data class OpenAiRequest(
+    val model: String,
+    val messages: List<Message>,
+    val temperature: Double? = null
 )
 
 @Serializable
 data class Choice(
+    val index: Int,
     val message: Message
+)
+
+@Serializable
+data class OpenAiResponse(
+    val id: String,
+    val choices: List<Choice>
 )

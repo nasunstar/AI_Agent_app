@@ -6,15 +6,15 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization) // ✅ 이 줄을 추가하세요.
+    alias(libs.plugins.kotlin.serialization)
 }
 
-// local.properties 파일을 읽는 로직은 여기에 위치하는 것이 맞습니다.
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
+val openAiKey: String = (localProperties.getProperty("OPENAI_API_KEY") ?: "").trim()
 
 android {
     namespace = "com.example.database_project"
@@ -26,14 +26,16 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-        // ✅ API 키 추가 로직을 이 안으로 옮겼습니다.
-        buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
+        buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
+        }
         release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            isMinifyEnabled = true
+            buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
         }
     }
 
@@ -41,12 +43,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
     kotlinOptions {
         jvmTarget = "17"
     }
 
-    // ✅ buildFeatures 블록을 하나로 합쳤습니다.
     buildFeatures {
         compose = true
         buildConfig = true
@@ -73,16 +73,15 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // 네트워크 (Retrofit)
+    // 네트워크
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.converter)
-    implementation(libs.okhttp) // Add this line
+    implementation(libs.okhttp)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // ✅ 추가
 
     // Test
     testImplementation(libs.junit4)
     androidTestImplementation(libs.junit.ext)
     androidTestImplementation(libs.espresso)
-
-
 }
