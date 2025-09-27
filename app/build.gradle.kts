@@ -84,5 +84,8 @@ dependencies {
     androidTestImplementation(libs.junit.ext)
     androidTestImplementation(libs.espresso)
 
+    implementation(libs.play.services.auth)
+    implementation(libs.security.crypto)
+
 
 }
