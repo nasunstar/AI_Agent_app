@@ -13,3 +13,19 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Gradle & build
+.gradle/
+build/
+**/build/
+
+# Android Studio
+.idea/
+
+
+# NDK/외부 빌드
+.externalNativeBuild/
+.cxx/
+
+# 기타
+
+captures/
