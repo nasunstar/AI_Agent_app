@@ -42,9 +42,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 private val dateFormatter: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd(E) HH:mm", Locale.KOREA)
+private val KST = java.time.ZoneId.of("Asia/Seoul")
 
 fun Long.formatAsLocal(): String =
-    Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).format(dateFormatter)
+    java.time.Instant.ofEpochMilli(this).atZone(KST).format(dateFormatter)
 
 fun Long.formatAsRelative(): CharSequence =
     DateUtils.getRelativeTimeSpanString(this, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
