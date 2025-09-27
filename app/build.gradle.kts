@@ -6,35 +6,63 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization) // ✅ 이 줄을 추가하세요.
+    alias(libs.plugins.kotlin.serialization)
 }
 
-// local.properties 파일을 읽는 로직은 여기에 위치하는 것이 맞습니다.
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(localPropertiesFile.inputStream())
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        load(file.inputStream())
+    }
 }
 
 android {
-    namespace = "com.example.database_project"
+    namespace = "com.example.localfirstassistant"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.database_project"
-        minSdk = 21
+        applicationId = "com.example.localfirstassistant"
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
-        // ✅ API 키 추가 로직을 이 안으로 옮겼습니다.
-        buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
+        versionName = "1.0.0"
+
+        vectorDrawables.useSupportLibrary = true
+
+        buildConfigField(
+            "String",
+            "GMAIL_CLIENT_ID",
+            "\"${localProperties.getProperty("GMAIL_CLIENT_ID", "")}"\"
+        )
+        buildConfigField(
+            "String",
+            "NAVER_CLIENT_ID",
+            "\"${localProperties.getProperty("NAVER_CLIENT_ID", "")}"\"
+        )
+        buildConfigField(
+            "String",
+            "NAVER_CLIENT_SECRET",
+            "\"${localProperties.getProperty("NAVER_CLIENT_SECRET", "")}"\"
+        )
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
 
     compileOptions {
@@ -46,12 +74,11 @@ android {
         jvmTarget = "17"
     }
 
-    // ✅ buildFeatures 블록을 하나로 합쳤습니다.
-    buildFeatures {
-        compose = true
-        buildConfig = true
+    packaging {
+        resources {
+            excludes += setOf("META-INF/LICENSE", "META-INF/NOTICE")
+        }
     }
-    buildToolsVersion = "34.0.0"
 
     room {
         schemaDirectory("$projectDir/schemas")
@@ -62,27 +89,40 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
+    implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.navigation)
+    implementation(libs.constraintlayout.compose)
+
     implementation(libs.core.ktx)
+    implementation(libs.appcompat)
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.window)
 
-    // Room
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.core)
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // 네트워크 (Retrofit)
-    implementation(libs.retrofit)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit.converter)
-    implementation(libs.okhttp) // Add this line
+    implementation(libs.work.runtime.ktx)
 
-    // Test
+    implementation(libs.security.crypto)
+    implementation(libs.play.services.auth)
+
+    implementation(libs.jakarta.mail)
+    implementation(libs.jakarta.activation)
+
+    implementation(libs.mlkit.text)
+    implementation(libs.naver.login)
+
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
+
     testImplementation(libs.junit4)
-    androidTestImplementation(libs.junit.ext)
+    androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso)
-
-
 }

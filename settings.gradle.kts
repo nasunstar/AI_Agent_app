@@ -2,9 +2,10 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()   // 🔥 이 줄 반드시 있어야 함
+        gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -12,6 +13,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "DataBase_project"
-include(":app")
 
+rootProject.name = "LocalFirstAssistant"
+include(":app")
